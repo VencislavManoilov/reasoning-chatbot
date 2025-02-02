@@ -1,0 +1,24 @@
+# Binaries and build artifacts
+bin/
+obj/
+
+# User-specific files
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and temporary files
+*.log
+*.tlog
+*.tmp
+
+# Rider and VS Code
+.idea/
+.vscode/
+
+# NuGet packages
+packages/
+*.nupkg
+project.lock.json
