@@ -1,3 +1,6 @@
+# Configuration files
+appsettings.Development.json
+
 # Binaries and build artifacts
 bin/
 obj/
