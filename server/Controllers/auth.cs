@@ -24,8 +24,29 @@ public class AuthController : ControllerBase {
 
     [HttpPost("login")]
     [Consumes("application/json", "application/x-www-form-urlencoded")]
-    public IActionResult Login([FromForm] LoginRequest request) {
-        return Ok(new { message = "Login successful", username = request.Username, password = request.Password });
+    public async Task<IActionResult> Login([FromForm] LoginRequest request) {
+        // Find user by username
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == request.Username);
+        
+        // Check if user exists
+        if(user == null) {
+            return BadRequest(new { error = "Invalid username or password" });
+        }
+
+        // Hash the provided password and compare with stored hash
+        string hashedPassword = HashPassword(request.Password);
+        if(user.Password != hashedPassword) {
+            return BadRequest(new { error = "Invalid username or password" });
+        }
+
+        // Login successful
+        return Ok(new { 
+            message = "Login successful",
+            user = new { 
+                username = user.Name,
+                email = user.Email
+            }
+        });
     }
 
     [HttpPost("register")]
@@ -33,12 +54,12 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> Register([FromForm] RegisterRequest request)
     {
         // Check if user already exists
-        if (await _context.Users.AnyAsync(u => u.Name == request.Username)) {
-            return BadRequest("Username already exists");
+        if(await _context.Users.AnyAsync(u => u.Name == request.Username)) {
+            return BadRequest(new { error = "Username already exists" });
         }
 
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email)) {
-            return BadRequest("Email already exists");
+        if(await _context.Users.AnyAsync(u => u.Email == request.Email)) {
+            return BadRequest(new { error = "Email already exists" });
         }
 
         // Create new user
@@ -57,8 +78,29 @@ public class AuthController : ControllerBase {
 
     [HttpDelete("delete")]
     [Consumes("application/json", "application/x-www-form-urlencoded")]
-    public IActionResult Delete([FromForm] DeleteRequest request) {
-        return Ok(new { message = "Account deleted successfully", username = request.Username, password = request.Password });
+    public async Task<IActionResult> Delete([FromForm] DeleteRequest request) {
+        // Find user by username
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == request.Username);
+        
+        // Check if user exists
+        if(user == null) {
+            return BadRequest(new { error = "Invalid username or password" });
+        }
+
+        // Verify password
+        string hashedPassword = HashPassword(request.Password);
+        if(user.Password != hashedPassword) {
+            return BadRequest(new { error = "Invalid username or password" });
+        }
+
+        // Remove user from database
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { 
+            message = "Account deleted successfully",
+            username = request.Username
+        });
     }
 }
 
