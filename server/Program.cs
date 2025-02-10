@@ -27,8 +27,6 @@ app.UseRouting();
 app.MapControllers();
 // app.UseAuthorization();
 
-app.MapGet("/", () => {
-    return new { version = "0.1", message = "Welcome to Reasoning Chatbot API" };
-});
+app.MapGet("/", () => new { version = "0.1", message = "Welcome to Reasoning Chatbot API" });
 
 app.Run();
