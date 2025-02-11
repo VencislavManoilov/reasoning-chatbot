@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.main {
+  padding: 2rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all .1s ease-in-out;
+}
+
+button.primary {
+    background: #007bff;
+    color: white;
+}
+
+button.primary:hover {
+    background: #0056b3 !important;
+}
+
+button.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+button.secondary:hover {
+    background: #545b62 !important;
+}
+
+button.register {
+    background: #28a745;
+    color: white;
+}
+
+button.register:hover {
+    background: #218838;
+}

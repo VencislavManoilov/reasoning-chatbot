@@ -1,22 +1,37 @@
-<div class="login-container">
-    <h2>Login</h2>
-    
-    <form (ngSubmit)="register()">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" formControlName="email" class="form-control" id="email" placeholder="Enter email">
-        </div>
+<div class="popup-overlay">
+  <div class="popup-content">
+    <h2>Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" formControlName="username" />
+      </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" formControlName="password" class="form-control" id="password" placeholder="Enter password">
-        </div>
-        
-        <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm password">
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+        />
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="secondary" (click)="close()">
+          Cancel
+        </button>
+        <button type="submit" class="primary">Register</button>
+      </div>
     </form>
+  </div>
 </div>
