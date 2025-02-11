@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import axios from 'axios';
 
 @Component({
   selector: 'app-register',
@@ -26,15 +27,26 @@ export class RegisterComponent {
     });
   }
 
-  register() {
+  async register() {
     if (this.registerForm.valid) {
       const formValue = this.registerForm.value;
       if (formValue.password !== formValue.confirmPassword) {
         alert('Passwords do not match!');
         return;
       }
-      console.log('Form submitted:', formValue);
-      // TODO: Add API call to register
+      
+      const params = new URLSearchParams();
+      params.append('Username', formValue.username);
+      params.append('Email', formValue.email);
+      params.append('Password', formValue.password);
+
+      const registerReq = await axios.post("http://localhost:5010/api/auth/register", params);
+
+      if(registerReq.status === 201) {
+        this.router.navigate(['/auth/login']);
+      } else {
+        alert('Registration failed!');
+      }
     }
   }
 
