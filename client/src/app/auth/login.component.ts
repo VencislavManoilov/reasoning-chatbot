@@ -36,11 +36,14 @@ export class LoginComponent {
 
       const loginReq = await axios.post(
         'http://localhost:5010/api/auth/login',
-        params
+        params,
+        { withCredentials: true }
       );
 
       if (loginReq.status === 200) {
+        localStorage.setItem('sessionId', loginReq.data.sessionId);
         alert('Login successful!');
+        this.router.navigate(["/profile"]);
       } else {
         alert('Registration failed!');
       }
