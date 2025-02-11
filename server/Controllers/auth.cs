@@ -22,6 +22,24 @@ public class AuthController : ControllerBase {
         _context = context;
     }
 
+    [HttpGet("profile")]
+    public IActionResult Profile() {
+        var userId = HttpContext.Session.GetString("UserId");
+        if (string.IsNullOrEmpty(userId)) {
+            return Unauthorized(new { error = "User not logged in" });
+        }
+
+        var user = _context.Users.Find(int.Parse(userId));
+        if (user == null) {
+            return NotFound(new { error = "User not found" });
+        }
+
+        return Ok(new { 
+            username = user.Name,
+            email = user.Email
+        });
+    }
+
     [HttpPost("login")]
     [Consumes("application/json", "application/x-www-form-urlencoded")]
     public async Task<IActionResult> Login([FromForm] LoginRequest request) {
@@ -39,13 +57,16 @@ public class AuthController : ControllerBase {
             return BadRequest(new { error = "Invalid username or password" });
         }
 
+        HttpContext.Session.SetString("UserId", user.Id.ToString());
+
         // Login successful
         return Ok(new { 
             message = "Login successful",
             user = new { 
                 username = user.Name,
                 email = user.Email
-            }
+            },
+            sessionId = HttpContext.Session.Id
         });
     }
 
@@ -70,6 +91,12 @@ public class AuthController : ControllerBase {
         await _context.SaveChangesAsync();
 
         return Ok(new { message = "Registration successful" });
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout() {
+        HttpContext.Session.Clear();
+        return Ok(new { message = "Logout successful" });
     }
 
     [HttpDelete("delete")]
