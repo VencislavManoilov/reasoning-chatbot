@@ -1,0 +1,23 @@
+<div class="popup-overlay">
+  <div class="popup-content">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" />
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="secondary" (click)="close()">
+          Cancel
+        </button>
+        <button type="submit" class="primary">Login</button>
+      </div>
+    </form>
+  </div>
+</div>

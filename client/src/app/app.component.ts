@@ -17,4 +17,8 @@ export class AppComponent {
   openRegister() {
     this.router.navigate(['/auth/register']);
   }
+
+  openLogin() {
+    this.router.navigate(['/auth/login']);
+  }
 }

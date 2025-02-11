@@ -9,7 +9,7 @@ import axios from 'axios';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./auth.css']
 })
 
 export class RegisterComponent {
@@ -42,7 +42,7 @@ export class RegisterComponent {
 
       const registerReq = await axios.post("http://localhost:5010/api/auth/register", params);
 
-      if(registerReq.status === 201) {
+      if(registerReq.status === 200) {
         this.router.navigate(['/auth/login']);
       } else {
         alert('Registration failed!');
