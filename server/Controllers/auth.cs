@@ -26,7 +26,7 @@ public class AuthController : ControllerBase {
     [Consumes("application/json", "application/x-www-form-urlencoded")]
     public async Task<IActionResult> Login([FromForm] LoginRequest request) {
         // Find user by username
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == request.Username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         
         // Check if user exists
         if(user == null) {
@@ -54,10 +54,6 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> Register([FromForm] RegisterRequest request)
     {
         // Check if user already exists
-        if(await _context.Users.AnyAsync(u => u.Name == request.Username)) {
-            return BadRequest(new { error = "Username already exists" });
-        }
-
         if(await _context.Users.AnyAsync(u => u.Email == request.Email)) {
             return BadRequest(new { error = "Email already exists" });
         }
@@ -105,7 +101,7 @@ public class AuthController : ControllerBase {
 }
 
 public class LoginRequest {
-    public required string Username { get; set; }
+    public required string Email { get; set; }
     public required string Password { get; set; }
 }
 
