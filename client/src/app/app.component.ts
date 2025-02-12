@@ -15,26 +15,17 @@ export class AppComponent {
 
   constructor(private router: Router) {}
 
-  openRegister() {
-    this.router.navigate(['/auth/register']);
-  }
-
-  openLogin() {
-    this.router.navigate(['/auth/login']);
-  }
-
   async checkSession(): Promise<void> {
     const sessionId = localStorage.getItem('sessionId');
     if(!sessionId) {
       return;
     }
 
-    const request = await axios.get('http://localhost:5010/api/auth/profile', { withCredentials: true });
-
-    if(request.status !== 200) {
-      localStorage.removeItem('sessionId');
-    } else {
+    try {
+      const request = await axios.get('http://localhost:5010/api/auth/profile', { withCredentials: true });
       this.router.navigate(['/profile'], { state: { data: request.data } });
+    } catch(error) {
+      localStorage.removeItem('sessionId');
     }
   }
 
