@@ -1,0 +1,8 @@
+<div id="home">
+    <h1>Hello!</h1>
+    <p>This is a project I am working on! It is a chatbot that has reasoning which means it thinks before vomiting a response.</p>
+    <div class="authButtons" *ngIf="!isLoggedIn()">
+        <button class="primary" (click)="login()">Login</button>
+        <button class="register" (click)="register()">Register</button>
+    </div>
+</div>
