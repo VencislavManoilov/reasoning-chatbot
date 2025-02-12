@@ -4,13 +4,20 @@ using Microsoft.Extensions.Hosting;
 using App.Data;
 using App.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.SqlServer;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddDistributedMemoryCache();
+
+// Configure PostgreSQL Distributed Cache
+builder.Services.AddSingleton<IDistributedCache, PostgreSqlDistributedCache>();
+
+// Configure Session
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromDays(30);
     options.Cookie.HttpOnly = true;

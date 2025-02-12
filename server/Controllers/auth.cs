@@ -58,6 +58,7 @@ public class AuthController : ControllerBase {
         }
 
         HttpContext.Session.SetString("UserId", user.Id.ToString());
+        await HttpContext.Session.CommitAsync();
 
         // Login successful
         return Ok(new { 
