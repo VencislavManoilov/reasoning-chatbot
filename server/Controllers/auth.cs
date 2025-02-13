@@ -44,7 +44,11 @@ public class AuthController : ControllerBase {
         }
 
         var userId = userIdClaim.Value;
-        var user = await _context.Users.FindAsync(userId);
+        if (!int.TryParse(userId, out int userIdInt)) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var user = await _context.Users.FindAsync(userIdInt);
         if (user == null) {
             return NotFound(new { error = "User not found" });
         }
