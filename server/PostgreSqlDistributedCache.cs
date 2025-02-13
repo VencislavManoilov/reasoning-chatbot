@@ -11,7 +11,7 @@ public class PostgreSqlDistributedCache : IDistributedCache
 
     public PostgreSqlDistributedCache(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection");
+        _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
     }
 
     public byte[] Get(string key)
