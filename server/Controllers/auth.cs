@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using App.Data;
 using Microsoft.EntityFrameworkCore;
 using App.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/auth")]
@@ -18,18 +20,38 @@ public class AuthController : ControllerBase {
 
     private readonly AppDbContext _context;
 
-    public AuthController(AppDbContext context) {
+    private readonly IConfiguration _configuration;
+
+    private readonly JwtService _jwtService;
+
+    public AuthController(AppDbContext context, IConfiguration configuration) {
         _context = context;
+        _configuration = configuration;
+        _jwtService = new JwtService();
     }
 
     [HttpGet("profile")]
-    [UseAuthenticationMiddleware]
-    public IActionResult Profile() {
-        var user = HttpContext.Items["User"] as User;
-        return Ok(new
-        {
-            username = user?.Name,
-            email = user?.Email
+    [Authorize]
+    public async Task<IActionResult> Profile() {
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        if (identity == null) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var userIdClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var userId = userIdClaim.Value;
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) {
+            return NotFound(new { error = "User not found" });
+        }
+
+        return Ok(new {
+            username = user.Name,
+            email = user.Email
         });
     }
 
@@ -50,8 +72,7 @@ public class AuthController : ControllerBase {
             return BadRequest(new { error = "Invalid username or password" });
         }
 
-        HttpContext.Session.SetString("UserId", user.Id.ToString());
-        await HttpContext.Session.CommitAsync();
+        var token = _jwtService.GenerateToken(user.Id.ToString());
 
         // Login successful
         return Ok(new { 
@@ -60,7 +81,7 @@ public class AuthController : ControllerBase {
                 username = user.Name,
                 email = user.Email
             },
-            sessionId = HttpContext.Session.Id
+            token
         });
     }
 
