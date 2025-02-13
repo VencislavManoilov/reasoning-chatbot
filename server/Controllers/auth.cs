@@ -23,20 +23,13 @@ public class AuthController : ControllerBase {
     }
 
     [HttpGet("profile")]
+    [UseAuthenticationMiddleware]
     public IActionResult Profile() {
-        var userId = HttpContext.Session.GetString("UserId");
-        if (string.IsNullOrEmpty(userId)) {
-            return Unauthorized(new { error = "User not logged in" });
-        }
-
-        var user = _context.Users.Find(int.Parse(userId));
-        if (user == null) {
-            return NotFound(new { error = "User not found" });
-        }
-
-        return Ok(new { 
-            username = user.Name,
-            email = user.Email
+        var user = HttpContext.Items["User"] as User;
+        return Ok(new
+        {
+            username = user?.Name,
+            email = user?.Email
         });
     }
 
