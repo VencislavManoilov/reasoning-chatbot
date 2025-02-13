@@ -1,5 +1,5 @@
 # Configuration files
-appsettings.Development.json
+.env
 
 # Binaries and build artifacts
 bin/
