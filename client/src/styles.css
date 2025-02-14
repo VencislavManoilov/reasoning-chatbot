@@ -37,3 +37,22 @@ button.register {
 button.register:hover {
     background: #218838;
 }
+
+.linkButton {
+    background: transparent;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    width: fit-content;
+    height: fit-content;
+    padding: 6px 24px;
+    border: 1px solid black;
+    border-radius: 50px;
+    transition: all .15s ease-in-out;
+}
+
+.linkButton:hover {
+    background: black;
+    color: white;
+    border-color: white;
+}

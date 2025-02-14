@@ -1,5 +1,6 @@
 import { NgFor } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -10,7 +11,9 @@ import { Component, Input } from '@angular/core';
 export class SidebarComponent {
   @Input() data: any;
 
-  displayChats() {
-    // logic to display chats
+  constructor(private router: Router) {}
+
+  openChat(id: number): void {
+    this.router.navigate([`/chat/${id}`]);
   }
 }

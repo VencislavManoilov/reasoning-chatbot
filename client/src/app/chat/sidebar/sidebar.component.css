@@ -1,0 +1,25 @@
+#sidebar {
+    width: 250px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: #00000018;
+}
+
+#sidebar > h2 {
+    padding: 12px;
+    margin: 0;
+}
+
+#sidebar > ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid #ccc;
+}
+
+#sidebar > ul > li {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}

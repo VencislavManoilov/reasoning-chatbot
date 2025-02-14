@@ -1,6 +1,29 @@
 <main id="chat">
     <app-chat-sidebar [data]="chats"></app-chat-sidebar>
     <div id="chat-container">
-        
+        <div id="chat-header">
+            <h3>Reasoning Chatbot</h3>
+            <a href="/profile" (click)="openProfile($event)" class="linkButton" target="_self">Profile</a>
+        </div>
+
+        <div id="chat-messages">
+            <div *ngIf="chat == undefined || chat.length === 0" class="chat-message">
+                <div class="chat-message-content">
+                    <p>Hello</p>
+                </div>
+            </div>
+            <div *ngIf="chat && chat.length > 0">
+                <div *ngFor="let message of chat" class="chat-message">
+                    <div class="chat-message-content">
+                        <p>{{ message.content }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-input">
+            <input type="text" placeholder="Type a message..." />
+            <button>Send</button>
+        </div>
     </div>
 </main>

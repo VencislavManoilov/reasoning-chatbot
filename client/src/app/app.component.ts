@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd  } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -16,11 +17,18 @@ export class AppComponent {
 
   async checkSession(): Promise<void> {
     const token = localStorage.getItem('token');
-    if(!token) {
+    if (!token) {
       return;
     }
 
-    this.router.navigate(['/chat']);
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd) // Wait for navigation to finish
+    ).subscribe((event: NavigationEnd) => {
+      // Allow any /chat/* path or /profile
+      if(!event.url.startsWith('/chat') && event.url !== '/profile') {
+        this.router.navigate(['/chat']);
+      }
+    });
   }
 
   ngOnInit() {
