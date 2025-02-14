@@ -1,0 +1,8 @@
+<div id="sidebar">
+    <h2>Chats</h2>
+    <ul>
+      <li *ngFor="let chat of data">
+        {{ chat.title ?? "Untitled" }}
+      </li>
+    </ul>
+</div>

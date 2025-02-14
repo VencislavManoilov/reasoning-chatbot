@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Router } from '@angular/router';
-import axios from 'axios';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,7 @@ export class AppComponent {
       return;
     }
 
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/chat']);
   }
 
   ngOnInit() {

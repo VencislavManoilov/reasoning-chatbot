@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import axios from 'axios';
 
 @Component({
@@ -9,15 +10,8 @@ import axios from 'axios';
 
 export class ProfileComponent implements OnInit {
     user: any;
-    @Input() data: any;
 
-    constructor() { 
-        if(this.data) {
-            this.user = this.data;
-        } else {
-            this.getProfile();
-        }
-    }
+    constructor(private router: Router) {}
     
     async getProfile() {
         try {
@@ -30,11 +24,15 @@ export class ProfileComponent implements OnInit {
             this.user = request.data;
         } catch(error) {
             localStorage.removeItem('token');
-            window.location.href = '/';
+            this.router.navigate(['/']);
         }
     }
 
+    openChat() {
+        this.router.navigate(['/chat']);
+    }
+
     ngOnInit(): void {
-        
+        this.getProfile();
     }
 }
