@@ -17,6 +17,20 @@ public class ChatContoller : ControllerBase {
         _context = context;
     }
 
+    [HttpGet("list")]
+    public async Task<IActionResult> List() {
+        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null || !int.TryParse(userId, out int userIdInt)) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var chats = await _context.Chats
+            .Where(c => c.UserId == userIdInt)
+            .Select(c => new { c.Id, c.Title })
+            .ToListAsync();
+        return Ok(chats);
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> CreateChat([FromForm] ChatRequest request) {
         var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -88,6 +102,27 @@ public class ChatContoller : ControllerBase {
             return BadRequest(new { error = e.Message });
         }
     }
+
+    [HttpGet("view")]
+    public async Task<IActionResult> View([FromForm] ViewRequest request) {
+        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null || !int.TryParse(userId, out int userIdInt)) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var chat = await _context.Chats.FindAsync(request.ChatId);
+        if(chat == null) {
+            return NotFound(new { error = "Chat not found" });
+        }
+
+        if(chat.UserId != userIdInt) {
+            return Unauthorized(new { error = "You do not have permission to access this chat" });
+        }
+
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? [];
+
+        return Ok(new { messages });
+    }
 }
 
 public class ChatRequest {
@@ -97,6 +132,10 @@ public class ChatRequest {
 public class SendRequest {
     public required string Messages { get; set; }
     public int? ChatId { get; set; }
+}
+
+public class ViewRequest {
+    public int ChatId { get; set; }
 }
 
 public class Message {
