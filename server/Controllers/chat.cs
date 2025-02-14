@@ -59,8 +59,9 @@ public class ChatContoller : ControllerBase {
                 ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
                 string messagesJson = JsonConvert.SerializeObject(messages);
                 ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
-
-                messages.Add(new Message { Role = "assistant", Content = completion.Content[0].Text });
+                
+                var completionContent = JsonConvert.DeserializeObject<Message>(completion.Content[0].Text)?.Content;
+                messages.Add(new Message { Role = "assistant", Content = completionContent });
 
                 var _chat = new Chat {
                     UserId = userIdInt,
@@ -90,7 +91,8 @@ public class ChatContoller : ControllerBase {
                 string messagesJson = JsonConvert.SerializeObject(messages);
                 ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
 
-                messages.Add(new Message { Role = "assistant", Content = completion.Content[0].Text });
+                var completionContent = completion.Content[0].Text;
+                messages.Add(new Message { Role = "assistant", Content = completionContent });
 
                 chat.Messages = JsonConvert.SerializeObject(messages);
                 _context.Chats.Update(chat);
@@ -104,7 +106,7 @@ public class ChatContoller : ControllerBase {
     }
 
     [HttpGet("view")]
-    public async Task<IActionResult> View([FromForm] IdRequest request) {
+    public async Task<IActionResult> View([FromQuery] IdRequest request) {
         var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null || !int.TryParse(userId, out int userIdInt)) {
             return Unauthorized(new { error = "Invalid token" });
