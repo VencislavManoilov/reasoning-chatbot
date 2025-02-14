@@ -33,18 +33,8 @@ public class AuthController : ControllerBase {
     [HttpGet("profile")]
     [Authorize]
     public async Task<IActionResult> Profile() {
-        var identity = HttpContext.User.Identity as ClaimsIdentity;
-        if (identity == null) {
-            return Unauthorized(new { error = "Invalid token" });
-        }
-
-        var userIdClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) {
-            return Unauthorized(new { error = "Invalid token" });
-        }
-
-        var userId = userIdClaim.Value;
-        if (!int.TryParse(userId, out int userIdInt)) {
+        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null || !int.TryParse(userId, out int userIdInt)) {
             return Unauthorized(new { error = "Invalid token" });
         }
 
