@@ -12,7 +12,7 @@ export class HomeComponent {
   constructor(private router: Router) {}
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('sessionId');
+    return !!localStorage.getItem('token');
   }
 
   login(): void {

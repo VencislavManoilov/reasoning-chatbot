@@ -16,17 +16,12 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   async checkSession(): Promise<void> {
-    const sessionId = localStorage.getItem('sessionId');
-    if(!sessionId) {
+    const token = localStorage.getItem('token');
+    if(!token) {
       return;
     }
 
-    try {
-      const request = await axios.get('http://localhost:5010/api/auth/profile', { withCredentials: true });
-      this.router.navigate(['/profile'], { state: { data: request.data } });
-    } catch(error) {
-      localStorage.removeItem('sessionId');
-    }
+    this.router.navigate(['/profile']);
   }
 
   ngOnInit() {

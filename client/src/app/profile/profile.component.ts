@@ -20,12 +20,17 @@ export class ProfileComponent implements OnInit {
     }
     
     async getProfile() {
-        const request = await axios.get('http://localhost:5010/api/auth/profile', {withCredentials: true});
-
-        if(request.status === 200) {
+        try {
+            const request = await axios.get('http://localhost:5010/api/auth/profile', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            
             this.user = request.data;
-        } else {
-            localStorage.removeItem('sessionId');
+        } catch(error) {
+            localStorage.removeItem('token');
+            window.location.href = '/';
         }
     }
 

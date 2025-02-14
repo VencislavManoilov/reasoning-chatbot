@@ -34,17 +34,16 @@ export class LoginComponent {
       params.append('Email', formValue.email);
       params.append('Password', formValue.password);
 
-      const loginReq = await axios.post(
-        'http://localhost:5010/api/auth/login',
-        params,
-        { withCredentials: true }
-      );
+      try {
+        const loginReq = await axios.post(
+          'http://localhost:5010/api/auth/login',
+          params
+        );
 
-      if (loginReq.status === 200) {
-        localStorage.setItem('sessionId', loginReq.data.sessionId);
+        localStorage.setItem('token', loginReq.data.token);
         alert('Login successful!');
         this.router.navigate(["/profile"]);
-      } else {
+      } catch(error) {
         alert('Registration failed!');
       }
     }
