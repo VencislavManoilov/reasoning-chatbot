@@ -9,13 +9,5 @@ namespace App.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Chat> Chats { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            // Mark Chat class as keyless
-            modelBuilder.Entity<Chat>().HasNoKey();
-        }
     }
 }
