@@ -104,7 +104,7 @@ public class ChatContoller : ControllerBase {
     }
 
     [HttpGet("view")]
-    public async Task<IActionResult> View([FromForm] ViewRequest request) {
+    public async Task<IActionResult> View([FromForm] IdRequest request) {
         var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null || !int.TryParse(userId, out int userIdInt)) {
             return Unauthorized(new { error = "Invalid token" });
@@ -123,6 +123,39 @@ public class ChatContoller : ControllerBase {
 
         return Ok(new { messages });
     }
+
+    [HttpPost("give-title")]
+    public async Task<IActionResult> GiveTitle([FromForm] IdRequest request) {
+        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null || !int.TryParse(userId, out int userIdInt)) {
+            return Unauthorized(new { error = "Invalid token" });
+        }
+
+        var chat = await _context.Chats.FindAsync(request.ChatId);
+        if(chat == null) {
+            return NotFound(new { error = "Chat not found" });
+        }
+
+        if(chat.UserId != userIdInt) {
+            return Unauthorized(new { error = "You do not have permission to access this chat" });
+        }
+
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? [];
+
+        if (messages.Count > 0) {
+            messages[0].Content = "Based on the conversasion below, make a title for the conversasion.";
+        }
+
+        ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+        string messagesJson = JsonConvert.SerializeObject(messages);
+        ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
+
+        chat.Title = completion.Content[0].Text;
+        _context.Chats.Update(chat);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { title = chat.Title });
+    }
 }
 
 public class ChatRequest {
@@ -134,7 +167,7 @@ public class SendRequest {
     public int? ChatId { get; set; }
 }
 
-public class ViewRequest {
+public class IdRequest {
     public int ChatId { get; set; }
 }
 
