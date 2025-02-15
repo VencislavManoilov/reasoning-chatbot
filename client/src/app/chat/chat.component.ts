@@ -92,6 +92,13 @@ export class ChatComponent {
       }
 
       this.chat = response.data.messages;
+      this.messageContent = '';
+      setTimeout(() => {
+        const chatContainer = document.querySelector('#chat-messages');
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }, 100);
     } catch (error) {
       alert('Error sending message');
     }

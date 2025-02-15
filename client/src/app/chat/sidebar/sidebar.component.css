@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     background-color: #00000018;
+    overflow-y: auto;
 }
 
 #sidebar > h2 {
