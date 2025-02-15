@@ -69,6 +69,8 @@ export class ChatComponent {
     try {
       if(this.chat.length === 0) {
         this.chat = [{ role: "user", content: this.messageContent }];
+      } else {
+        this.chat.push({ role: "user", content: this.messageContent });
       }
 
       const params = new URLSearchParams();
@@ -76,6 +78,7 @@ export class ChatComponent {
         params.append('ChatId', this.chatId);
       }
       params.append('Message', this.messageContent);
+      this.messageContent = '';
 
       const response = await axios.post('http://localhost:5010/api/chat/send', params, {
         headers: {
@@ -89,10 +92,15 @@ export class ChatComponent {
       }
 
       this.chat = response.data.messages;
-      this.messageContent = '';
     } catch (error) {
       alert('Error sending message');
     }
+  }
+
+  adjustTextareaHeight(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 5 * 24) + 'px';
   }
 
   openProfile(event: Event) {
