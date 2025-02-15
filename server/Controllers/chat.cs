@@ -61,7 +61,7 @@ public class ChatContoller : ControllerBase {
                 string messagesJson = JsonConvert.SerializeObject(messages);
                 ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
                 
-                var completionContent = JsonConvert.DeserializeObject<Message>(completion.Content[0].Text)?.content;
+                var completionContent = completion.Content[0].Text;
                 messages.Add(new Message { role = "assistant", content = completionContent });
 
                 var _chat = new Chat {
