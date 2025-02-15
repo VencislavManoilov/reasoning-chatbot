@@ -46,3 +46,43 @@
     font-size: 1rem;
     margin: 0;
 }
+
+#chat-messages-container {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+    margin-top: -12px;  
+}
+
+.chat-message {
+    width: 100%;
+    height: fit-content;
+    margin: 12px 0;
+}
+
+.chat-message p {
+    margin: 0;
+}
+
+.chat-message > .system {
+    display: none;
+}
+
+.chat-message > .assistant {
+    width: 100%;
+}
+
+.chat-message > .user {
+    width: fit-content;
+    max-width: 70%;
+    padding: 12px 24px;
+    margin-left: auto;
+    text-align: left;
+    background-color: #00000021;
+    border-radius: 12px;
+}

@@ -11,9 +11,9 @@
                 <h2>What can I help with?</h2>
                 <h4>You can choose between different models by clicking the top left corner</h4>
             </div>
-            <div *ngIf="chat && chat.length > 0">
+            <div *ngIf="chat && chat.length > 0" id="chat-messages-container">
                 <div *ngFor="let message of chat" class="chat-message">
-                    <div class="chat-message-content">
+                    <div [ngClass]="'chat-message-content ' + message.role">
                         <p>{{ message.content }}</p>
                     </div>
                 </div>

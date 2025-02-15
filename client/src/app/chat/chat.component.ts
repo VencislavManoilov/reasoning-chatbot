@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import axios from 'axios';
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
-  imports: [SidebarComponent, NgFor, NgIf],
+  imports: [SidebarComponent, NgFor, NgIf, NgClass],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
