@@ -26,3 +26,23 @@
 #chat-messages {
     flex-grow: 1;
 }
+
+.chat-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.chat-hero > h2 {
+    font-weight: normal;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.chat-hero > h4 {
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0;
+}

@@ -42,7 +42,7 @@ export class LoginComponent {
 
         localStorage.setItem('token', loginReq.data.token);
         alert('Login successful!');
-        this.router.navigate(["/"]);
+        window.location.reload();
       } catch(error) {
         alert('Registration failed!');
       }

@@ -7,10 +7,9 @@
         </div>
 
         <div id="chat-messages">
-            <div *ngIf="chat == undefined || chat.length === 0" class="chat-message">
-                <div class="chat-message-content">
-                    <p>Hello</p>
-                </div>
+            <div *ngIf="chat == undefined || chat.length === 0" class="chat-hero">
+                <h2>What can I help with?</h2>
+                <h4>You can choose between different models by clicking the top left corner</h4>
             </div>
             <div *ngIf="chat && chat.length > 0">
                 <div *ngFor="let message of chat" class="chat-message">

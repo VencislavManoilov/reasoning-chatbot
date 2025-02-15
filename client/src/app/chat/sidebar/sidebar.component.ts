@@ -14,6 +14,6 @@ export class SidebarComponent {
   constructor(private router: Router) {}
 
   openChat(id: number): void {
-    this.router.navigate([`/chat/${id}`]);
+    this.router.navigate([`/chat`, id]);
   }
 }

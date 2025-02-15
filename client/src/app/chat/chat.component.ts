@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import axios from 'axios';
 import { SidebarComponent } from "./sidebar/sidebar.component";
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 
 @Component({
@@ -12,20 +12,11 @@ import { NgFor, NgIf } from '@angular/common';
 })
 export class ChatComponent {
   title = 'chat';
-  chats: any[];
+  chats: any[] = [];
   chatId: any;
-  chat: any;
+  chat: any = [];
 
-  constructor(private router: Router) {
-    this.chats = [];
-    this.chatId = this.router.url.split('/').pop();
-    if (this.chatId && this.chatId !== "chat") {
-      this.GetChat(parseInt(this.chatId));
-    } else {
-      this.chat = [];
-      this.chatId = null;
-    }
-  }
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   async GetChat(id: number): Promise<void> {
     try {
@@ -34,7 +25,7 @@ export class ChatComponent {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         params: {
-          ChatId: parseInt(this.chatId)
+          ChatId: id
         }
       });
 
@@ -51,7 +42,7 @@ export class ChatComponent {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      })
+      });
 
       this.chats = response.data;
     } catch(error) {
@@ -77,5 +68,17 @@ export class ChatComponent {
 
   ngOnInit() {
     this.GetChats();
+
+    // Listen for changes in the chat ID
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.chatId = id;
+        this.GetChat(parseInt(id));
+      } else {
+        this.chat = [];
+        this.chatId = null;
+      }
+    });
   }
 }
