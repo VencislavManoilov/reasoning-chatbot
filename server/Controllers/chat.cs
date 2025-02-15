@@ -51,22 +51,22 @@ public class ChatContoller : ControllerBase {
         }
 
         try {
+            var messages = new List<Message>();
+
             if(request.ChatId == null) {
-                var messages = new List<Message> {
-                    new Message { Role = "system", Content = "You are a helpful assistant called Ducky!" },
-                    new Message { Role = "user", Content = JsonConvert.DeserializeObject<Message[]>(request.Messages)?.Last().Content }
-                };
+                messages.Add(new Message { role = "system", content = "You are a helpful assistant called Ducky!" });
+                messages.Add(new Message { role = "user", content = request.Message });
 
                 ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
                 string messagesJson = JsonConvert.SerializeObject(messages);
                 ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
                 
-                var completionContent = JsonConvert.DeserializeObject<Message>(completion.Content[0].Text)?.Content;
-                messages.Add(new Message { Role = "assistant", Content = completionContent });
+                var completionContent = JsonConvert.DeserializeObject<Message>(completion.Content[0].Text)?.content;
+                messages.Add(new Message { role = "assistant", content = completionContent });
 
                 var _chat = new Chat {
                     UserId = userIdInt,
-                    Messages = messages != null ? JsonConvert.SerializeObject(messages) : null
+                    Messages = JsonConvert.SerializeObject(messages)
                 };
 
                 _context.Chats.Add(_chat);
@@ -84,16 +84,16 @@ public class ChatContoller : ControllerBase {
                     return Unauthorized(new { error = "You do not have permission to access this chat" });
                 }
 
-                var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? [];
+                messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
 
-                messages.Add(new Message { Role = "user", Content = JsonConvert.DeserializeObject<Message[]>(request.Messages)?.Last().Content });
+                messages.Add(new Message { role = "user", content = request.Message });
 
                 ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
                 string messagesJson = JsonConvert.SerializeObject(messages);
                 ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
 
                 var completionContent = completion.Content[0].Text;
-                messages.Add(new Message { Role = "assistant", Content = completionContent });
+                messages.Add(new Message { role = "assistant", content = completionContent });
 
                 chat.Messages = JsonConvert.SerializeObject(messages);
                 _context.Chats.Update(chat);
@@ -122,7 +122,7 @@ public class ChatContoller : ControllerBase {
             return Unauthorized(new { error = "You do not have permission to access this chat" });
         }
 
-        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? [];
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
 
         return Ok(new { messages });
     }
@@ -143,10 +143,10 @@ public class ChatContoller : ControllerBase {
             return Unauthorized(new { error = "You do not have permission to access this chat" });
         }
 
-        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? [];
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
 
         if (messages.Count > 0) {
-            messages[0].Content = "Based on the conversasion below, make a title for the conversasion.";
+            messages[0].content = "Based on the conversasion below, make a title for the conversasion.";
         }
 
         ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
@@ -166,7 +166,7 @@ public class ChatRequest {
 }
 
 public class SendRequest {
-    public required string Messages { get; set; }
+    public required string Message { get; set; }
     public int? ChatId { get; set; }
 }
 
@@ -175,6 +175,6 @@ public class IdRequest {
 }
 
 public class Message {
-    public string? Role { get; set; }
-    public string? Content { get; set; }
+    public string? role { get; set; }
+    public string? content { get; set; }
 }
