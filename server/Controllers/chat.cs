@@ -26,6 +26,7 @@ public class ChatContoller : ControllerBase {
 
         var chats = await _context.Chats
             .Where(c => c.UserId == userIdInt)
+            .OrderByDescending(c => c.Id)
             .Select(c => new { c.Id, c.Title })
             .ToListAsync();
         return Ok(chats);
