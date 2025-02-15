@@ -8,6 +8,7 @@
     flex-direction: column;
     width: 100%;
     height: 100dvh;
+    max-height: 100dvh;
 }
 
 #chat-header {
@@ -25,6 +26,8 @@
 
 #chat-messages {
     flex-grow: 1;
+    overflow: hidden;
+    overflow-y: auto;
 }
 
 .chat-hero {
@@ -51,18 +54,21 @@
     display: flex;
     flex-direction: column;
     padding: 12px;
-    overflow-y: auto;
     height: 100%;
     width: 100%;
     max-width: 750px;
     margin: 0 auto;
-    margin-top: -12px;  
+    margin-top: -12px;
 }
 
 .chat-message {
     width: 100%;
     height: fit-content;
     margin: 12px 0;
+}
+
+.chat-message:last-child {
+    padding-bottom: 72px;
 }
 
 .chat-message p {
@@ -85,4 +91,44 @@
     text-align: left;
     background-color: #00000021;
     border-radius: 12px;
+}
+
+#chat-input {
+    width: 750px;
+    max-width: 80%;
+    margin: 12px auto;
+    margin-top: 0;
+    position: relative;
+}
+
+#chat-input > input {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #00000021;
+    border-radius: 12px;
+}
+
+#chat-input > input:focus {
+    outline: none;
+}
+
+#chat-input > button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    transform: translateY(-.5px);
+    margin: auto 0;
+    padding: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    background-color: #00000021;
+    cursor: pointer;
+}
+
+#chat-input > button > svg {
+    transform: translateX(1px);
+    stroke-width: 1px;
+    stroke: black;
 }
