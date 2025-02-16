@@ -79,9 +79,6 @@ public class ChatContoller : ControllerBase {
                 messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
                 messages.Add(new Message { role = "user", content = request.Message });
 
-                chat.Messages = JsonConvert.SerializeObject(messages);
-                _context.Chats.Update(chat);
-                await _context.SaveChangesAsync();
             }
 
             Response.ContentType = "text/event-stream";
@@ -89,6 +86,13 @@ public class ChatContoller : ControllerBase {
             Response.Headers.Append("Connection", "keep-alive");
 
             await StreamChatCompletionAsync(messages, Response.Body);
+
+            var updatedChat = await _context.Chats.FindAsync(request.ChatId);
+            if (updatedChat != null) {
+                updatedChat.Messages = JsonConvert.SerializeObject(messages);
+                _context.Chats.Update(updatedChat);
+                await _context.SaveChangesAsync();
+            }
 
             return new EmptyResult();
         } catch (Exception e) {

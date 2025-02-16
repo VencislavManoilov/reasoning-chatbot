@@ -80,29 +80,36 @@ export class ChatComponent {
       params.append('Message', this.messageContent);
       this.messageContent = '';
   
-      const response = await axios.post('http://localhost:5010/api/chat/send', params, {
+      const response = await fetch('http://localhost:5010/api/chat/send', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-        responseType: 'stream'
+        body: params
       });
   
-      // const reader = response.data.getReader();
-      // const decoder = new TextDecoder('utf-8');
-      // let assistantMessage = { role: "assistant", content: "" };
-      // this.chat.push(assistantMessage);
+      if (!response.body) {
+        throw new Error('Response body is null');
+      }
   
-      // while (true) {
-      //   const { done, value } = await reader.read();
-      //   if (done) break;
-      //   assistantMessage.content += decoder.decode(value, { stream: true });
-      //   this.updateChatView();
-      // }
-
-      this.chat.push({ role: "assistant", content: response.data });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let assistantMessage = { role: "assistant", content: "" };
+      this.chat.push(assistantMessage);
   
-      if(!this.chatId && response.data.chatId) {
-        this.chatId = response.data.chatId;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+  
+        assistantMessage.content += decoder.decode(value, { stream: true });
+        this.updateChatView(); // Update UI as new chunks arrive
+      }
+  
+      // Handle chatId from response headers if needed
+      const chatIdHeader = response.headers.get('X-Chat-Id');
+      if (!this.chatId && chatIdHeader) {
+        this.chatId = chatIdHeader;
       }
   
       this.updateChatView();
