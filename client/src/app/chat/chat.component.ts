@@ -1,23 +1,38 @@
-import { Component, SecurityContext } from '@angular/core';
+import { Component, SecurityContext, AfterViewChecked } from '@angular/core';
 import axios from 'axios';
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MarkdownModule, MarkdownService, SECURITY_CONTEXT } from 'ngx-markdown';
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import hljs from 'highlight.js/lib/core';
+import python from 'highlight.js/lib/languages/python';
+import javascript from 'highlight.js/lib/languages/javascript';
+
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('javascript', javascript);
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule, MarkdownModule],
+  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule, MarkdownModule, HighlightModule],
   providers: [
     MarkdownService,
-    { provide: SECURITY_CONTEXT, useValue: SecurityContext.HTML }
+    { provide: SECURITY_CONTEXT, useValue: SecurityContext.HTML },
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        languages: { python, javascript },
+        themePath: '../../../node_modules/highlight.js/styles/default.css'
+      }
+    }
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent {
+export class ChatComponent implements AfterViewChecked {
   title = 'chat';
   chats: any[] = [];
   chatId: any;
@@ -159,6 +174,20 @@ export class ChatComponent {
       } else {
         this.chat = [];
         this.chatId = null;
+      }
+    });
+  }
+
+  ngAfterViewChecked() {
+    this.highlightCode();
+  }
+
+  highlightCode() {
+    const codeBlocks = document.querySelectorAll('pre code');
+    codeBlocks.forEach((block) => {
+      if (!(block as HTMLElement).dataset['highlighted']) {
+        hljs.highlightElement(block as HTMLElement);
+        (block as HTMLElement).dataset['highlighted'] = 'true';
       }
     });
   }
