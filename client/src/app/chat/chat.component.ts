@@ -92,12 +92,12 @@ export class ChatComponent {
       if (!response.body) {
         throw new Error('Response body is null');
       }
-  
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
       let assistantMessage = { role: "assistant", content: "" };
       this.chat.push(assistantMessage);
-  
+      
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -105,11 +105,10 @@ export class ChatComponent {
         assistantMessage.content += decoder.decode(value, { stream: true });
         this.updateChatView(); // Update UI as new chunks arrive
       }
-  
-      // Handle chatId from response headers if needed
-      const chatIdHeader = response.headers.get('X-Chat-Id');
+
+      const chatIdHeader = response.headers.get("Chat-Id");
       if (!this.chatId && chatIdHeader) {
-        this.chatId = chatIdHeader;
+        this.chatId = parseInt(chatIdHeader);
       }
   
       this.updateChatView();

@@ -78,12 +78,13 @@ public class ChatContoller : ControllerBase {
 
                 messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
                 messages.Add(new Message { role = "user", content = request.Message });
-
             }
 
             Response.ContentType = "text/event-stream";
             Response.Headers.Append("Cache-Control", "no-cache");
             Response.Headers.Append("Connection", "keep-alive");
+            Response.Headers.Append("Chat-Id", request.ChatId.ToString());
+            Response.Headers.Append("Access-Control-Expose-Headers", "Chat-Id");
 
             await StreamChatCompletionAsync(messages, Response.Body);
 
