@@ -65,43 +65,60 @@ export class ChatComponent {
 
   async sendMessage(): Promise<void> {
     if (!this.messageContent.trim()) return;
-
+  
     try {
       if(this.chat.length === 0) {
         this.chat = [{ role: "user", content: this.messageContent }];
       } else {
         this.chat.push({ role: "user", content: this.messageContent });
       }
-
+  
       const params = new URLSearchParams();
       if(this.chatId) {
         params.append('ChatId', this.chatId);
       }
       params.append('Message', this.messageContent);
       this.messageContent = '';
-
+  
       const response = await axios.post('http://localhost:5010/api/chat/send', params, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        responseType: 'stream'
       });
+  
+      // const reader = response.data.getReader();
+      // const decoder = new TextDecoder('utf-8');
+      // let assistantMessage = { role: "assistant", content: "" };
+      // this.chat.push(assistantMessage);
+  
+      // while (true) {
+      //   const { done, value } = await reader.read();
+      //   if (done) break;
+      //   assistantMessage.content += decoder.decode(value, { stream: true });
+      //   this.updateChatView();
+      // }
 
+      this.chat.push({ role: "assistant", content: response.data });
+  
       if(!this.chatId && response.data.chatId) {
         this.chatId = response.data.chatId;
-        this.router.navigate([`/chat`, this.chatId]);
       }
-
-      this.chat = response.data.messages;
-      this.messageContent = '';
-      setTimeout(() => {
-        const chatContainer = document.querySelector('#chat-messages');
-        if (chatContainer) {
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-      }, 100);
+  
+      this.updateChatView();
     } catch (error) {
+      console.log(error);
       alert('Error sending message');
     }
+  }
+
+  updateChatView(): void {
+    setTimeout(() => {
+      const chatContainer = document.querySelector('#chat-messages');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }, 100);
   }
 
   adjustTextareaHeight(event: Event): void {

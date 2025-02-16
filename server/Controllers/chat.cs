@@ -6,6 +6,7 @@ using OpenAI.Chat;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Newtonsoft.Json;
+using System.Text;
 
 [ApiController]
 [Route("api/chat")]
@@ -53,56 +54,62 @@ public class ChatContoller : ControllerBase {
         try {
             var messages = new List<Message>();
 
-            if(request.ChatId == null) {
+            if (request.ChatId == null) {
                 messages.Add(new Message { role = "system", content = "You are a helpful assistant called Ducky!" });
                 messages.Add(new Message { role = "user", content = request.Message });
 
-                ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-                string messagesJson = JsonConvert.SerializeObject(messages);
-                ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
-                
-                var completionContent = completion.Content[0].Text;
-                messages.Add(new Message { role = "assistant", content = completionContent });
-
-                var _chat = new Chat {
+                var newChat = new Chat {
                     UserId = userIdInt,
                     Messages = JsonConvert.SerializeObject(messages)
                 };
 
-                _context.Chats.Add(_chat);
+                _context.Chats.Add(newChat);
                 await _context.SaveChangesAsync();
-                request.ChatId = _chat.Id;
-
-                return Ok(new { chatId = _chat.Id, messages });
+                request.ChatId = newChat.Id;
             } else {
                 var chat = await _context.Chats.FindAsync(request.ChatId);
-                if(chat == null) {
+                if (chat == null) {
                     return NotFound(new { error = "Chat not found" });
                 }
 
-                if(chat.UserId != userIdInt) {
+                if (chat.UserId != userIdInt) {
                     return Unauthorized(new { error = "You do not have permission to access this chat" });
                 }
 
                 messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
-
                 messages.Add(new Message { role = "user", content = request.Message });
-
-                ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-                string messagesJson = JsonConvert.SerializeObject(messages);
-                ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
-
-                var completionContent = completion.Content[0].Text;
-                messages.Add(new Message { role = "assistant", content = completionContent });
 
                 chat.Messages = JsonConvert.SerializeObject(messages);
                 _context.Chats.Update(chat);
                 await _context.SaveChangesAsync();
-
-                return Ok(new { messages });
             }
-        } catch(Exception e) {
+
+            Response.ContentType = "text/event-stream";
+            Response.Headers.Append("Cache-Control", "no-cache");
+            Response.Headers.Append("Connection", "keep-alive");
+
+            await StreamChatCompletionAsync(messages, Response.Body);
+
+            return new EmptyResult();
+        } catch (Exception e) {
             return BadRequest(new { error = e.Message });
+        }
+    }
+
+    private async Task StreamChatCompletionAsync(List<Message> messages, Stream responseStream) {
+        ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+        string messagesJson = JsonConvert.SerializeObject(messages);
+        IAsyncEnumerable<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messagesJson);
+
+        var assistantMessage = new Message { role = "assistant", content = "" };
+        messages.Add(assistantMessage);
+
+        await foreach (StreamingChatCompletionUpdate completionUpdate in completionUpdates) {
+            if (completionUpdate.ContentUpdate.Count > 0) {
+                string content = completionUpdate.ContentUpdate[0].Text;
+                assistantMessage.content += content;
+                await responseStream.WriteAsync(Encoding.UTF8.GetBytes(content));
+            }
         }
     }
 
