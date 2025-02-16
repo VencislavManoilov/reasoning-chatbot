@@ -56,3 +56,11 @@ button.register:hover {
     color: white;
     border-color: white;
 }
+
+pre code {
+    background: #282c34;
+    display: block;
+    border-radius: 8px;
+    padding: 13px;
+    color: #ccc;
+}
