@@ -1,13 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, SecurityContext } from '@angular/core';
 import axios from 'axios';
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MarkdownModule, MarkdownService, SECURITY_CONTEXT } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chat',
-  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule],
+  standalone: true,
+  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule, MarkdownModule],
+  providers: [
+    MarkdownService,
+    { provide: SECURITY_CONTEXT, useValue: SecurityContext.HTML }
+  ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
@@ -17,6 +23,7 @@ export class ChatComponent {
   chatId: any;
   chat: any = [];
   messageContent: string = '';
+  assistantMessage: { role: string, content: string } = { role: '', content: '' };
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -95,16 +102,18 @@ export class ChatComponent {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
-      let assistantMessage = { role: "assistant", content: "" };
-      this.chat.push(assistantMessage);
+      this.assistantMessage = { role: "assistant", content: "" };
       
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
   
-        assistantMessage.content += decoder.decode(value, { stream: true });
-        this.updateChatView(); // Update UI as new chunks arrive
+        this.assistantMessage.content += decoder.decode(value, { stream: true });
+        this.updateChatView();
       }
+
+      this.chat.push(this.assistantMessage);
+      this.assistantMessage = { role: '', content: '' };
 
       const chatIdHeader = response.headers.get("Chat-Id");
       if (!this.chatId && chatIdHeader) {

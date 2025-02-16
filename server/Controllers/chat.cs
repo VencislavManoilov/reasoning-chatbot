@@ -55,7 +55,7 @@ public class ChatContoller : ControllerBase {
             var messages = new List<Message>();
 
             if (request.ChatId == null) {
-                messages.Add(new Message { role = "system", content = "You are a helpful assistant called Ducky!" });
+                messages.Add(new Message { role = "system", content = "You are a helpful assistant that formats responses using Markdown." });
                 messages.Add(new Message { role = "user", content = request.Message });
 
                 var newChat = new Chat {
