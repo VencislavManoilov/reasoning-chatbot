@@ -97,6 +97,11 @@ export class ChatComponent implements AfterViewChecked {
       }
       params.append('Message', this.messageContent);
       this.messageContent = '';
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.blur();
+        textarea.disabled = true;
+      }
   
       const response = await fetch('http://localhost:5010/api/chat/send', {
         method: 'POST',
@@ -129,6 +134,11 @@ export class ChatComponent implements AfterViewChecked {
       const chatIdHeader = response.headers.get("Chat-Id");
       if (!this.chatId && chatIdHeader) {
         this.chatId = parseInt(chatIdHeader);
+      }
+
+      if(textarea) {
+        textarea.disabled = false;
+        textarea.focus();
       }
   
       this.updateChatView();
