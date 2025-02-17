@@ -8,6 +8,7 @@ import { MarkdownModule, MarkdownService, SECURITY_CONTEXT } from 'ngx-markdown'
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import hljs from 'highlight.js/lib/core';
 import hljsLanguages from 'highlight.js/lib/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-chat',
@@ -40,7 +41,7 @@ export class ChatComponent implements AfterViewChecked {
 
   async GetChat(id: number): Promise<void> {
     try {
-      const response = await axios.get(`http://localhost:5010/api/chat/view`, {
+      const response = await axios.get(environment.apiUrl+"/api/chat/view", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
@@ -58,7 +59,7 @@ export class ChatComponent implements AfterViewChecked {
 
   async GetChats(): Promise<void> {
     try {
-      const response = await axios.get('http://localhost:5010/api/chat/list', {
+      const response = await axios.get(environment.apiUrl+"/api/chat/list", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -67,7 +68,7 @@ export class ChatComponent implements AfterViewChecked {
       this.chats = response.data;
     } catch(error) {
       try {
-        await axios.get('http://localhost:5010/api/auth/profile', {
+        await axios.get(environment.apiUrl+"/api/auth/profile", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -103,7 +104,7 @@ export class ChatComponent implements AfterViewChecked {
         textarea.disabled = true;
       }
   
-      const response = await fetch('http://localhost:5010/api/chat/send', {
+      const response = await fetch(environment.apiUrl+"/api/chat/send", {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

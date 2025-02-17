@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -36,7 +37,7 @@ export class LoginComponent {
 
       try {
         const loginReq = await axios.post(
-          'http://localhost:5010/api/auth/login',
+          environment.apiUrl+"/api/auth/login",
           params
         );
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-profile',
@@ -15,7 +16,7 @@ export class ProfileComponent implements OnInit {
     
     async getProfile() {
         try {
-            const request = await axios.get('http://localhost:5010/api/auth/profile', {
+            const request = await axios.get(environment.apiUrl+"/api/auth/profile", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }

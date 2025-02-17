@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -40,7 +41,7 @@ export class RegisterComponent {
       params.append('Email', formValue.email);
       params.append('Password', formValue.password);
 
-      const registerReq = await axios.post("http://localhost:5010/api/auth/register", params);
+      const registerReq = await axios.post(environment.apiUrl+"/api/auth/register", params);
 
       if(registerReq.status === 200) {
         this.router.navigate(['/auth/login']);

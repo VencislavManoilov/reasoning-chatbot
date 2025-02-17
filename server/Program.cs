@@ -12,13 +12,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-// Ensure you have the latest versions of the following packages in your .csproj file:
-// <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
-// <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.0" />
-// <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-// <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="6.0.0" />
-// <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
-
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,9 +42,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-
-// Configure PostgreSQL Distributed Cache
-builder.Services.AddSingleton<IDistributedCache, PostgreSqlDistributedCache>();
 
 builder.Services.AddCors(options => {
     options.AddPolicy(
