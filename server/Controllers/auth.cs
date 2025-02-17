@@ -44,8 +44,8 @@ public class AuthController : ControllerBase {
         }
 
         return Ok(new {
-            username = user.Name,
-            email = user.Email
+            username = user.name,
+            email = user.email
         });
     }
 
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase {
     [Consumes("application/json", "application/x-www-form-urlencoded")]
     public async Task<IActionResult> Login([FromForm] LoginRequest request) {
         // Find user by username
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.email == request.email);
         
         // Check if user exists
         if(user == null) {
@@ -61,19 +61,19 @@ public class AuthController : ControllerBase {
         }
 
         // Hash the provided password and compare with stored hash
-        string hashedPassword = HashPassword(request.Password);
-        if(user.Password != hashedPassword) {
+        string hashedPassword = HashPassword(request.password);
+        if(user.password != hashedPassword) {
             return BadRequest(new { error = "Invalid username or password" });
         }
 
-        var token = _jwtService.GenerateToken(user.Id.ToString());
+        var token = _jwtService.GenerateToken(user.id.ToString());
 
         // Login successful
         return Ok(new { 
             message = "Login successful",
             user = new { 
-                username = user.Name,
-                email = user.Email
+                username = user.name,
+                email = user.email
             },
             token
         });
@@ -84,15 +84,15 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> Register([FromForm] RegisterRequest request)
     {
         // Check if user already exists
-        if(await _context.Users.AnyAsync(u => u.Email == request.Email)) {
+        if(await _context.Users.AnyAsync(u => u.email == request.email)) {
             return BadRequest(new { error = "Email already exists" });
         }
 
         // Create new user
         var user = new User {
-            Name = request.Username,
-            Email = request.Email,
-            Password = HashPassword(request.Password)
+            name = request.username,
+            email = request.email,
+            password = HashPassword(request.password)
         };
 
         // Add to database
@@ -112,7 +112,7 @@ public class AuthController : ControllerBase {
     [Consumes("application/json", "application/x-www-form-urlencoded")]
     public async Task<IActionResult> Delete([FromForm] DeleteRequest request) {
         // Find user by username
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == request.Username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.name == request.username);
         
         // Check if user exists
         if(user == null) {
@@ -120,8 +120,8 @@ public class AuthController : ControllerBase {
         }
 
         // Verify password
-        string hashedPassword = HashPassword(request.Password);
-        if(user.Password != hashedPassword) {
+        string hashedPassword = HashPassword(request.password);
+        if(user.password != hashedPassword) {
             return BadRequest(new { error = "Invalid username or password" });
         }
 
@@ -131,23 +131,23 @@ public class AuthController : ControllerBase {
 
         return Ok(new { 
             message = "Account deleted successfully",
-            username = request.Username
+            username = request.username
         });
     }
 }
 
 public class LoginRequest {
-    public required string Email { get; set; }
-    public required string Password { get; set; }
+    public required string email { get; set; }
+    public required string password { get; set; }
 }
 
 public class RegisterRequest {
-    public required string Username { get; set; }
-    public required string Password { get; set; }
-    public required string Email { get; set; }
+    public required string username { get; set; }
+    public required string password { get; set; }
+    public required string email { get; set; }
 }
 
 public class DeleteRequest {
-    public required string Username { get; set; }
-    public required string Password { get; set; }
+    public required string username { get; set; }
+    public required string password { get; set; }
 }

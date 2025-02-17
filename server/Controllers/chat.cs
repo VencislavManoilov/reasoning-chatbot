@@ -26,9 +26,9 @@ public class ChatContoller : ControllerBase {
         }
 
         var chats = await _context.Chats
-            .Where(c => c.UserId == userIdInt)
-            .OrderByDescending(c => c.Id)
-            .Select(c => new { c.Id, c.Title })
+            .Where(c => c.userid == userIdInt)
+            .OrderByDescending(c => c.id)
+            .Select(c => new { c.id, c.title })
             .ToListAsync();
         return Ok(chats);
     }
@@ -59,24 +59,24 @@ public class ChatContoller : ControllerBase {
                 messages.Add(new Message { role = "user", content = request.Message });
 
                 var newChat = new Chat {
-                    UserId = userIdInt,
-                    Messages = JsonConvert.SerializeObject(messages)
+                    userid = userIdInt,
+                    messages = JsonConvert.SerializeObject(messages)
                 };
 
                 _context.Chats.Add(newChat);
                 await _context.SaveChangesAsync();
-                request.ChatId = newChat.Id;
+                request.ChatId = newChat.id;
             } else {
                 var chat = await _context.Chats.FindAsync(request.ChatId);
                 if (chat == null) {
                     return NotFound(new { error = "Chat not found" });
                 }
 
-                if (chat.UserId != userIdInt) {
+                if (chat.userid != userIdInt) {
                     return Unauthorized(new { error = "You do not have permission to access this chat" });
                 }
 
-                messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
+                messages = JsonConvert.DeserializeObject<List<Message>>(chat.messages ?? "[]") ?? new List<Message>();
                 messages.Add(new Message { role = "user", content = request.Message });
             }
 
@@ -90,7 +90,7 @@ public class ChatContoller : ControllerBase {
 
             var updatedChat = await _context.Chats.FindAsync(request.ChatId);
             if (updatedChat != null) {
-                updatedChat.Messages = JsonConvert.SerializeObject(messages);
+                updatedChat.messages = JsonConvert.SerializeObject(messages);
                 _context.Chats.Update(updatedChat);
                 await _context.SaveChangesAsync();
             }
@@ -130,11 +130,11 @@ public class ChatContoller : ControllerBase {
             return NotFound(new { error = "Chat not found" });
         }
 
-        if(chat.UserId != userIdInt) {
+        if(chat.userid != userIdInt) {
             return Unauthorized(new { error = "You do not have permission to access this chat" });
         }
 
-        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.messages ?? "[]") ?? new List<Message>();
 
         return Ok(new { messages });
     }
@@ -151,11 +151,11 @@ public class ChatContoller : ControllerBase {
             return NotFound(new { error = "Chat not found" });
         }
 
-        if(chat.UserId != userIdInt) {
+        if(chat.userid != userIdInt) {
             return Unauthorized(new { error = "You do not have permission to access this chat" });
         }
 
-        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.Messages ?? "[]") ?? new List<Message>();
+        var messages = JsonConvert.DeserializeObject<List<Message>>(chat.messages ?? "[]") ?? new List<Message>();
 
         if (messages.Count > 0) {
             messages[0].content = "Based on the conversasion below, make a title for the conversasion.";
@@ -165,11 +165,11 @@ public class ChatContoller : ControllerBase {
         string messagesJson = JsonConvert.SerializeObject(messages);
         ChatCompletion completion = await client.CompleteChatAsync(messagesJson);
 
-        chat.Title = completion.Content[0].Text;
+        chat.title = completion.Content[0].Text;
         _context.Chats.Update(chat);
         await _context.SaveChangesAsync();
 
-        return Ok(new { title = chat.Title });
+        return Ok(new { title = chat.title });
     }
 }
 

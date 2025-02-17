@@ -4,3 +4,4 @@ UpgradeLog.htm
 .vs/
 .github/
 Backup/
+docker-compose.yml
