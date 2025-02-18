@@ -3,7 +3,7 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    background-color: #00000018;
+    background-color: #171717;
     overflow-y: auto;
     transition: all 0.3s ease-in-out;
 }
@@ -17,11 +17,14 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
-    border-top: 1px solid #ccc;
+    line-height: normal;
 }
 
 #sidebar > ul > li {
     padding: 12px;
-    border-bottom: 1px solid #ccc;
     cursor: pointer;
+}
+
+#sidebar > ul > li:hover {
+    background-color: #282828;
 }
