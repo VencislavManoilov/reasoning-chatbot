@@ -1,7 +1,15 @@
 <main id="chat">
-    <app-chat-sidebar [data]="chats"></app-chat-sidebar>
+    <app-chat-sidebar *ngIf="sidebarOpen" [data]="chats"></app-chat-sidebar>
     <div id="chat-container">
         <div id="chat-header">
+            <div>
+                <button (click)="toggleSidebar()">
+                    <svg height="24" viewBox="0 0 24 24" width="24"><path d="m20 3h-16c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h6 2 8c1.103 0 2-.897 2-2v-14c0-1.103-.897-2-2-2zm-16 16v-12h6v12zm8 0v-12h8v-2l.002 14z"/><path d="m6 10h2v2h-2zm0 4h2v2h-2z"/></svg>
+                </button>
+                <button onclick="window.location.href = '/chat'">
+                    <svg fill="none" height="24" viewBox="0 0 24 24" width="24"><g stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m16.4745 5.40801 2.1172 2.11723m-.7559-3.98235-5.7272 5.72716c-.2955.29557-.497.67201-.579 1.08185l-.5296 2.6481 2.6481-.5296c.4098-.082.7863-.2835 1.0818-.579l5.7272-5.72717c.7239-.72386.7239-1.89747 0-2.62133s-1.8975-.72387-2.6213-.00001z"/><path d="m19 15v3c0 1.1046-.8954 2-2 2h-11c-1.10457 0-2-.8954-2-2v-11c0-1.10457.89543-2 2-2h3"/></g></svg>
+                </button>
+            </div>
             <h3>Reasoning Chatbot</h3>
             <a href="/profile" (click)="openProfile($event)" class="linkButton" target="_self">Profile</a>
         </div>

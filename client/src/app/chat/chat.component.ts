@@ -36,8 +36,13 @@ export class ChatComponent implements AfterViewChecked {
   chat: any = [];
   messageContent: string = '';
   assistantMessage: { role: string, content: string } = { role: '', content: '' };
+  sidebarOpen: boolean = true;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
 
   async GetChat(id: number): Promise<void> {
     try {
