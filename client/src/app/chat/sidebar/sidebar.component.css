@@ -5,6 +5,7 @@
     flex-direction: column;
     background-color: #00000018;
     overflow-y: auto;
+    transition: all 0.3s ease-in-out;
 }
 
 #sidebar > h2 {

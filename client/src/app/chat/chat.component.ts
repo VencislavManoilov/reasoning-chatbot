@@ -2,7 +2,7 @@ import { Component, SecurityContext, AfterViewChecked } from '@angular/core';
 import axios from 'axios';
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MarkdownModule, MarkdownService, SECURITY_CONTEXT } from 'ngx-markdown';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
@@ -13,7 +13,7 @@ import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule, MarkdownModule, HighlightModule],
+  imports: [SidebarComponent, NgFor, NgIf, NgClass, FormsModule, NgStyle, MarkdownModule, HighlightModule],
   providers: [
     MarkdownService,
     { provide: SECURITY_CONTEXT, useValue: SecurityContext.HTML },
@@ -36,7 +36,7 @@ export class ChatComponent implements AfterViewChecked {
   chat: any = [];
   messageContent: string = '';
   assistantMessage: { role: string, content: string } = { role: '', content: '' };
-  sidebarOpen: boolean = true;
+  sidebarOpen: boolean = window.innerWidth > 1030;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
