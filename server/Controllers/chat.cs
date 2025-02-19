@@ -55,14 +55,18 @@ public class ChatContoller : ControllerBase {
         switch (request.Type) {
             case "normal":
                 return await handleNormalChat(userIdInt, request);
+            case "normal++":
+                return await handleNormalChat(userIdInt, request, "gpt-4o");
             case "reason":
                 return await handleReasonChat(userIdInt, request);
+            case "reason++":
+                return await handleReasonChat(userIdInt, request, "gpt-4o");
             default:
                 return await handleNormalChat(userIdInt, request);
         }
     }
 
-    private async Task<IActionResult> handleNormalChat(int userId, SendRequest request) {
+    private async Task<IActionResult> handleNormalChat(int userId, SendRequest request, string? model = "gpt-4o-mini") {
         try {
             var messages = new List<Message>();
 
@@ -98,7 +102,7 @@ public class ChatContoller : ControllerBase {
             Response.Headers.Append("Chat-Id", request.ChatId.ToString());
             Response.Headers.Append("Access-Control-Expose-Headers", "Chat-Id");
 
-            await StreamChatCompletionAsync(messages, Response.Body, "gpt-4o-mini");
+            await StreamChatCompletionAsync(messages, Response.Body, model ?? "gpt-4o-mini");
 
             var updatedChat = await _context.Chats.FindAsync(request.ChatId);
             if (updatedChat != null) {
@@ -113,7 +117,7 @@ public class ChatContoller : ControllerBase {
         }
     }
 
-    private async Task<IActionResult> handleReasonChat(int userId, SendRequest request) {
+    private async Task<IActionResult> handleReasonChat(int userId, SendRequest request, string? model = "gpt-4o-mini") {
         try {
             var messages = new List<Message>();
 
@@ -170,7 +174,8 @@ public class ChatContoller : ControllerBase {
                     jsonSchemaIsStrict: true)
             };
 
-            ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            Console.WriteLine("Reason model: " + model);
+            ChatClient client = new(model, apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
             var question = new List<ChatMessage>{
                 new SystemChatMessage("Make a deep dive into the question by breaking it down into steps that can be used to solve the problem and provide a solve to every step"),
                 new UserChatMessage(messages.Last().content)
@@ -198,7 +203,8 @@ public class ChatContoller : ControllerBase {
 
             reasonedMessage += "Make the simplest response using the most important and relevant information from the reasoning steps above.";
 
-            await StreamChatCompletionAsync(messages, Response.Body, "gpt-4o-mini", reasonedMessage);
+            Console.WriteLine("Message model: " + model);
+            await StreamChatCompletionAsync(messages, Response.Body, model ?? "gpt-4o-mini", reasonedMessage);
 
             var updatedChat = await _context.Chats.FindAsync(request.ChatId);
             if (updatedChat != null) {
