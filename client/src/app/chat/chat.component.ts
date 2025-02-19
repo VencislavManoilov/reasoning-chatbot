@@ -37,11 +37,26 @@ export class ChatComponent implements AfterViewChecked {
   messageContent: string = '';
   assistantMessage: { role: string, content: string } = { role: '', content: '' };
   sidebarOpen: boolean = window.innerWidth > 1030;
+  type: string = 'normal';
+  modalOpen: boolean = false;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  openModal() {
+    this.modalOpen = !this.modalOpen;
+  }
+
+  closeModal() {
+    this.modalOpen = false;
+  }
+
+  changeType(type: string) {
+    this.type = type;
+    this.modalOpen = false;
   }
 
   async GetChat(id: number): Promise<void> {
@@ -102,6 +117,7 @@ export class ChatComponent implements AfterViewChecked {
         params.append('ChatId', this.chatId);
       }
       params.append('Message', this.messageContent);
+      params.append('Type', this.type);
       this.messageContent = '';
       const textarea = document.querySelector('textarea');
       if (textarea) {
