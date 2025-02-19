@@ -16,7 +16,9 @@
                 <div id="modalOutside" *ngIf="modalOpen" (click)="closeModal()">
                     <div id="modelModal" (click)="$event.stopPropagation()">
                         <button (click)="changeType('normal')">Normal</button>
+                        <button (click)="changeType('normal++')">Normal++</button>
                         <button (click)="changeType('reason')">Reason</button>
+                        <button (click)="changeType('reason++')">Reason++</button>
                     </div>
                 </div>
             </div>
@@ -35,7 +37,7 @@
             <div *ngIf="chat && chat.length > 0" id="chat-messages-container">
                 <div *ngFor="let message of chat" class="chat-message">
                     <div [ngClass]="'chat-message-content ' + message.role">
-                        <div id="reasoning" *ngIf="type == 'reason' && message.role == 'assistant' && message === chat[chat.length - 1]" (click)="openReasoning()">
+                        <div id="reasoning" *ngIf="(type == 'reason' || type == 'reason++') && message.role == 'assistant' && message === chat[chat.length - 1]" (click)="openReasoning()">
                             <p id="reasoningButton" *ngIf="!reasoningOpen">Reasoning Steps:</p>
                             <markdown id="reasoningMarkdown" *ngIf="reasoning && reasoningOpen" [data]="reasoning"></markdown>
                         </div>
