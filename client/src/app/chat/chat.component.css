@@ -234,3 +234,14 @@
     box-shadow: none;
     transition: transform 0.1s ease-in-out;   
 }
+
+#reasoning {
+    background-color: #2f2f2f;
+    border-radius: 24px;
+    padding: 12px 24px;
+    cursor: pointer;
+}
+
+#reasoningButton {
+    font-weight: bold;
+}

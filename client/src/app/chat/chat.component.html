@@ -35,6 +35,10 @@
             <div *ngIf="chat && chat.length > 0" id="chat-messages-container">
                 <div *ngFor="let message of chat" class="chat-message">
                     <div [ngClass]="'chat-message-content ' + message.role">
+                        <div id="reasoning" *ngIf="type == 'reason' && message.role == 'assistant' && message === chat[chat.length - 1]" (click)="openReasoning()">
+                            <p id="reasoningButton" *ngIf="!reasoningOpen">Reasoning Steps:</p>
+                            <markdown id="reasoningMarkdown" *ngIf="reasoning && reasoningOpen" [data]="reasoning"></markdown>
+                        </div>
                         <markdown *ngIf="message.role == 'assistant'" [data]="message.content"></markdown>
                         <p *ngIf="message.role == 'user'">{{ message.content }}</p>
                     </div>

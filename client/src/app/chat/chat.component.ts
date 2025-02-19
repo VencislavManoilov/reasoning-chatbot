@@ -39,6 +39,8 @@ export class ChatComponent implements AfterViewChecked {
   sidebarOpen: boolean = window.innerWidth > 1030;
   type: string = 'normal';
   modalOpen: boolean = false;
+  reasoning: string = '';
+  reasoningOpen: boolean = false;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -57,6 +59,10 @@ export class ChatComponent implements AfterViewChecked {
   changeType(type: string) {
     this.type = type;
     this.modalOpen = false;
+  }
+
+  openReasoning() {
+    this.reasoningOpen = !this.reasoningOpen;
   }
 
   async GetChat(id: number): Promise<void> {
@@ -124,6 +130,8 @@ export class ChatComponent implements AfterViewChecked {
         textarea.blur();
         textarea.disabled = true;
       }
+
+      this.reasoning = '';
   
       const response = await fetch(environment.apiUrl+"/api/chat/send", {
         method: 'POST',
@@ -136,6 +144,13 @@ export class ChatComponent implements AfterViewChecked {
   
       if (!response.body) {
         throw new Error('Response body is null');
+      }
+
+      const reasoningOutput = response.headers.get("Reasoning-Output");
+      if (reasoningOutput) {
+        this.reasoning = atob(reasoningOutput);
+      } else {
+        this.reasoning = '';
       }
 
       const reader = response.body.getReader();
