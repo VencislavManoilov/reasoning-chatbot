@@ -172,10 +172,10 @@ public class ChatContoller : ControllerBase {
 
             ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
             var question = new List<ChatMessage>{
-                new SystemChatMessage("Break down the question into small steps that can be used to solve the problem:"),
+                new SystemChatMessage("Make a deep dive into the question by breaking it down into steps that can be used to solve the problem:"),
                 new UserChatMessage(messages.Last().content)
             };
-            
+
             ChatCompletion completion = await client.CompleteChatAsync(question, options);
 
             using JsonDocument structuredJson = JsonDocument.Parse(completion.Content[0].Text);
@@ -187,17 +187,16 @@ public class ChatContoller : ControllerBase {
                 reasonedMessage += $"    Output: {stepElement.GetProperty("output")}\n";
             }
 
-            messages.Add(new Message { role = "assistant", content = reasonedMessage });
-
             Response.ContentType = "text/event-stream";
             Response.Headers.Append("Cache-Control", "no-cache");
             Response.Headers.Append("Connection", "keep-alive");
             Response.Headers.Append("Chat-Id", request.ChatId.ToString());
-            Response.Headers.Append("Access-Control-Expose-Headers", "Chat-Id");
-            
-            await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(reasonedMessage));
+            Response.Headers.Append("Reasoning-Output", Convert.ToBase64String(Encoding.UTF8.GetBytes(reasonedMessage)));
+            Response.Headers.Append("Access-Control-Expose-Headers", "Chat-Id, Reasoning-Output");
 
-            await StreamChatCompletionAsync(messages, Response.Body, "gpt-4o-mini");
+            reasonedMessage += "Make the simplest response using the most important and relevant information from the reasoning steps above.";
+
+            await StreamChatCompletionAsync(messages, Response.Body, "gpt-4o-mini", reasonedMessage);
 
             var updatedChat = await _context.Chats.FindAsync(request.ChatId);
             if (updatedChat != null) {
@@ -212,9 +211,10 @@ public class ChatContoller : ControllerBase {
         }
     }
 
-    private async Task StreamChatCompletionAsync(List<Message> messages, Stream responseStream, string model) {
+    private async Task StreamChatCompletionAsync(List<Message> messages, Stream responseStream, string model, string? additionalMessage = null) {
         ChatClient client = new(model, apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-        string messagesJson = JsonConvert.SerializeObject(messages);
+        string messagesJson = JsonConvert.SerializeObject(!string.IsNullOrEmpty(additionalMessage) ? messages.Concat(new List<Message> { new Message { role = "assistant", content = additionalMessage } }) : messages);
+        Console.WriteLine(messagesJson);
         IAsyncEnumerable<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messagesJson);
 
         var assistantMessage = new Message { role = "assistant", content = "" };
