@@ -155,10 +155,10 @@ public class ChatContoller : ControllerBase {
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "explanation": { "type": "string" },
+                                            "step": { "type": "string" },
                                             "output": { "type": "string" }
                                         },
-                                        "required": ["explanation", "output"],
+                                        "required": ["step", "output"],
                                         "additionalProperties": false
                                     }
                                 }
@@ -172,7 +172,7 @@ public class ChatContoller : ControllerBase {
 
             ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
             var question = new List<ChatMessage>{
-                new SystemChatMessage("Make a deep dive into the question by breaking it down into steps that can be used to solve the problem:"),
+                new SystemChatMessage("Make a deep dive into the question by breaking it down into steps that can be used to solve the problem and provide a solve to every step"),
                 new UserChatMessage(messages.Last().content)
             };
 
@@ -182,9 +182,11 @@ public class ChatContoller : ControllerBase {
 
             string reasonedMessage = "Reasoning steps:\n";
 
+            int step = 1;
             foreach (JsonElement stepElement in structuredJson.RootElement.GetProperty("steps").EnumerateArray()) {
-                reasonedMessage += $"  - Explanation: {stepElement.GetProperty("explanation")}\n";
-                reasonedMessage += $"    Output: {stepElement.GetProperty("output")}\n";
+                reasonedMessage += $"{step}. {stepElement.GetProperty("step")} \n";
+                reasonedMessage += $"- {stepElement.GetProperty("output")} \n";
+                step++;
             }
 
             Response.ContentType = "text/event-stream";
@@ -214,7 +216,6 @@ public class ChatContoller : ControllerBase {
     private async Task StreamChatCompletionAsync(List<Message> messages, Stream responseStream, string model, string? additionalMessage = null) {
         ChatClient client = new(model, apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
         string messagesJson = JsonConvert.SerializeObject(!string.IsNullOrEmpty(additionalMessage) ? messages.Concat(new List<Message> { new Message { role = "assistant", content = additionalMessage } }) : messages);
-        Console.WriteLine(messagesJson);
         IAsyncEnumerable<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messagesJson);
 
         var assistantMessage = new Message { role = "assistant", content = "" };
