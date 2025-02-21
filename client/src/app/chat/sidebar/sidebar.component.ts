@@ -1,10 +1,10 @@
-import { NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-sidebar',
-  imports: [NgFor],
+  imports: [NgFor, NgClass, NgIf],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })

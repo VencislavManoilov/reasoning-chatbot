@@ -41,6 +41,7 @@ export class ChatComponent implements AfterViewChecked {
   modalOpen: boolean = false;
   reasoning: string = '';
   reasoningOpen: boolean = false;
+  newChat: any = { id: 0,  title: '' };
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -171,6 +172,9 @@ export class ChatComponent implements AfterViewChecked {
       const chatIdHeader = response.headers.get("Chat-Id");
       if (!this.chatId && chatIdHeader) {
         this.chatId = parseInt(chatIdHeader);
+        setTimeout(() => {
+          this.giveTitle(this.chatId);
+        }, 500);
       }
 
       if(textarea) {
@@ -192,6 +196,23 @@ export class ChatComponent implements AfterViewChecked {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
     }, 100);
+  }
+
+  async giveTitle(id: number): Promise<void>  {
+    try {
+      const params = new URLSearchParams();
+      params.append('ChatId', id.toString());
+
+      const response = await axios.post(environment.apiUrl+"/api/chat/give-title", params, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      this.newChat = { id: id, title: response.data.title };
+    } catch(error) {
+      alert('Error setting title');
+    }
   }
 
   adjustTextareaHeight(event: Event): void {

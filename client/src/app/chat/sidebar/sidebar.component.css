@@ -28,3 +28,7 @@
 #sidebar > ul > li:hover {
     background-color: #282828;
 }
+
+#sidebar > ul > li.selected {
+    background-color: #535353;
+}

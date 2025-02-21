@@ -1,5 +1,5 @@
 <main id="chat">
-    <app-chat-sidebar [ngStyle]="{'transition': 'all .3s ease-in-out', 'margin-left': sidebarOpen ? '0' : '-250px'}" [data]="chats"></app-chat-sidebar>
+    <app-chat-sidebar [ngStyle]="{'transition': 'all .3s ease-in-out', 'margin-left': sidebarOpen ? '0' : '-250px'}" [data]="{chats, selectedChat: chatId, newChat}"></app-chat-sidebar>
     <div id="chat-container">
         <div id="chat-header">
             <div [ngStyle]="{'transform': sidebarOpen ? 'translateX(100px)' : 'none'}" id="chat-header-buttons">
