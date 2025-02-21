@@ -1,8 +1,40 @@
 <div id="home">
-    <h1>Hello!</h1>
-    <p>This is a project I am working on! It is a chatbot that has reasoning which means it thinks before vomiting a response.</p>
-    <div class="authButtons" *ngIf="!isLoggedIn()">
+    <header>
+        <h1>Welcome to Reasoning Chat Bot</h1>
+        <p>Your intelligent chatbot that thinks before responding.</p>
+    </header>
+    <section class="authButtons" *ngIf="!isLoggedIn()">
         <button class="primary" (click)="login()">Login</button>
         <button class="register" (click)="register()">Register</button>
+    </section>
+    <div class="content">
+        <section id="about">
+            <h2>About This Project</h2>
+            <p>This chatbot project leverages advanced reasoning to provide thoughtful and context-aware responses. It doesn't use reasoning models but cleaver algorithms</p>
+        </section>
+        <div class="right-column">
+            <section id="technologies">
+                <h2>Technologies Used</h2>
+                <div id="tech-list">
+                    <span><i class="fas fa-server"></i> ASP.NET</span>
+                    <span><i class="fas fa-database"></i> PostgreSQL</span>
+                    <span><i class="fab fa-angular"></i> Angular</span>
+                    <span><i class="fas fa-robot"></i> OpenAI</span>
+                </div>
+            </section>
+            <section id="features">
+                <h2>Cool Features</h2>
+                <ul>
+                    <li>Context-aware responses</li>
+                    <li>Real-time chat</li>
+                    <li>User authentication</li>
+                    <li>Profile management</li>
+                    <li>Responsive design</li>
+                </ul>
+            </section>
+        </div>
     </div>
+    <footer>
+        <p>&copy; 2023 Reasoning Chat Bot. All rights reserved.</p>
+    </footer>
 </div>

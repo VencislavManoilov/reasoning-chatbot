@@ -1,5 +1,23 @@
 #home {
     text-align: center;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    padding: 2rem;
+    overflow-x: hidden;
+}
+
+header {
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+header p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 #home h1 {
@@ -17,6 +35,109 @@
 .authButtons {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
     gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.authButtons button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    gap: 12px;
+}
+
+#technologies {
+    background: linear-gradient(180deg, #444, #555);
+}
+
+#about, #technologies, #features {
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid #777;
+}
+
+#about {
+    flex-grow: 1;
+    width: 100%;
+    background: linear-gradient(90deg, #333, #555);
+}
+
+#about h2, #technologies h2, #features h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+#about p, #features ul {
+    font-size: 1.2rem;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.right-column {
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#tech-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#tech-list span {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    background: linear-gradient(to right, #555, #777);
+    border-radius: 12px;
+    border: 1px solid #666;
+}
+
+#features {
+    background: linear-gradient(45deg, #794e43, #ffb662);
+    /* filter: brightness(0.9); */
+}
+
+#features h2 {
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+#features ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+footer {
+    margin-top: 2rem;
+    color: #777;
+}
+
+footer p {
+    font-size: 1rem !important;
+}
+
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #about, #technologies, #features {
+        /* width: 100%; */
+        width: initial;
+    }
 }
