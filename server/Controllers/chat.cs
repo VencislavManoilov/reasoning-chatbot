@@ -276,7 +276,7 @@ public class ChatContoller : ControllerBase {
         var messages = JsonConvert.DeserializeObject<List<Message>>(chat.messages ?? "[]") ?? new List<Message>();
 
         if (messages.Count > 0) {
-            messages[0].content = "Based on the conversasion below, make a title for the conversasion.";
+            messages[0].content = "Based on the conversasion below, make a title for the conversasion without using quotation marks.";
         }
 
         ChatClient client = new(model: "gpt-4o-mini", apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
@@ -287,7 +287,7 @@ public class ChatContoller : ControllerBase {
         _context.Chats.Update(chat);
         await _context.SaveChangesAsync();
 
-        return Ok(new { title = chat.title });
+        return Ok(new { chat.title });
     }
 }
 
