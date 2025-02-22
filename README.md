@@ -1,6 +1,6 @@
 # Chatbot with Reasoning
 
-Welcome to the Chatbot with Reasoning project! This repository contains a feature-rich chatbot application that utilizes OpenAI's API to provide advanced language model processing. The chatbot offers multiple operation modes, including reasoning capabilities for enhanced conversational interactions.
+Welcome to the Chatbot with Reasoning project! This repository contains a feature-rich chatbot application that utilizes OpenAI's API to provide advanced language model processing. The chatbot offers multiple operation modes, including reasoning capabilities for enhanced conversational interactions. The reasoning isn't just using the o1 model but creating multible steps and solutions for solving the problem which creates a chain of thought.
 
 ## Technologies Used
 
@@ -46,27 +46,26 @@ To run this project locally, you need to follow these steps:
 
 2. Add your OpenAI API key and your PostgreSQL database connection string to the `.env` file.
 
-3. Build and start the ASP.NET backend project. Adjust these steps according to your development environment.
+3. Run the backend (Make sure you have `.NET` installed):
+   ```bash
+   dotnet run
+   ```
 
 ### Database
 
-Ensure your PostgreSQL database is running with the necessary tables created. As of now, tables are not automatically created using docker.
+Ensure your PostgreSQL database is running with the necessary tables created. As of now, tables are not automatically created but I am working on it.
 
 ## Running with Docker
 
 You can also run this project using Docker. Please note that database tables are not created automatically yet, and work is ongoing to rectify this.
 
-1. Ensure Docker is installed and running on your machine.
+1. Create a `docker-compose.yml` file using the `docker-compose.example.yml` and paste your own OpenAI API key
 
 2. Use the following command to build and start the Docker containers:
    ```bash
    docker-compose up --build
    ```
 
-3. After running the above command, check the logs and ensure services have started correctly.
-
-## Future Improvements
-
-- Automate database table creation during Docker setup.
+3. The database container isn't creating the tables automatically so it won't work but I am trying to fix this.
 
 Feel free to contribute to this project or raise issues if you encounter any problems!
