@@ -12,9 +12,9 @@
             </div>
             <div id="type">
                 <button (click)="openModal()" [ngStyle]="{'transform': !sidebarOpen ? 'translateX(100px)' : 'none'}"><h2>Chatbot</h2></button>
-                <h4>{{type}}</h4>
+                <h4 [ngStyle]="{'transform': !sidebarOpen ? 'translateX(100px)' : 'none'}">{{type}}</h4>
                 <div id="modalOutside" *ngIf="modalOpen" (click)="closeModal()">
-                    <div id="modelModal" (click)="$event.stopPropagation()">
+                    <div id="modelModal" (click)="$event.stopPropagation()" [ngStyle]="{'transform': !sidebarOpen ? 'translateX(-150px)' : 'none'}">
                         <button (click)="changeType('normal')">Normal</button>
                         <button (click)="changeType('normal++')">Normal++</button>
                         <button (click)="changeType('reason')">Reason</button>
@@ -32,7 +32,7 @@
         <div id="chat-messages">
             <div *ngIf="chat == undefined || chat.length === 0" class="chat-hero">
                 <h2>What can I help with?</h2>
-                <h4>You can choose between different models by clicking the top left corner</h4>
+                <h4>You can choose between different models by clicking the 'Chatbot'</h4>
             </div>
             <div *ngIf="chat && chat.length > 0" id="chat-messages-container">
                 <div *ngFor="let message of chat" class="chat-message">
